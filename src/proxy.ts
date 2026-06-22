@@ -1,30 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 
-// Next.js 16: il convention file è `proxy.ts` (ex `middleware.ts`)
-// e la funzione deve chiamarsi `proxy`.
-
-const PUBLIC_APP_DOMAIN = process.env.NEXT_PUBLIC_APP_DOMAIN ?? 'orbitink.it'
+// Next.js 16: il convention file è `proxy.ts` (ex `middleware.ts`),
+// la funzione deve chiamarsi `proxy`.
+//
+// Scope ristretto: il proxy gira SOLO su /dashboard e /login (vedi matcher).
+// Homepage e pagine pubbliche NON passano dal proxy → nessuna chiamata Supabase,
+// massima velocità. Il routing per domini custom verrà aggiunto quando attivi.
 
 export async function proxy(request: NextRequest) {
-  const { pathname, hostname } = request.nextUrl
+  const { pathname } = request.nextUrl
 
-  // Custom domain routing: se l'hostname non è il dominio principale
-  // e non è localhost/vercel, trattalo come pagina pubblica del creator
-  const isMainDomain =
-    hostname === PUBLIC_APP_DOMAIN ||
-    hostname === `www.${PUBLIC_APP_DOMAIN}` ||
-    hostname === 'localhost' ||
-    hostname.endsWith('.vercel.app')
-
-  if (!isMainDomain) {
-    const url = request.nextUrl.clone()
-    url.pathname = `/_custom-domain${pathname}`
-    url.searchParams.set('host', hostname)
-    return NextResponse.rewrite(url)
-  }
-
-  // Auth per route protette
   let response = NextResponse.next({ request })
 
   const supabase = createServerClient(
@@ -62,7 +48,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
-  ],
+  matcher: ['/dashboard/:path*', '/login'],
 }
