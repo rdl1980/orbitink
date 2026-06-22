@@ -1,5 +1,32 @@
 @import "tailwindcss";
 
+/* Tailwind v4: i token di design vanno in @theme per generare le utility
+   (bg-ink, text-terracotta, border-sabbia, rounded-card, h-touch, font-serif…).
+   @theme emette anche le CSS var su :root, quindi landing.css può usare var(--color-*). */
+@theme {
+  --color-ink:        #1A1A2E;
+  --color-terracotta: #D4603A;
+  --color-rosso:      #C0392B;
+  --color-canvas:     #FDFAF6;
+  --color-avorio:     #F5F0E8;
+  --color-sabbia:     #E8DDD0;
+  --color-grigio:     #8C8279;
+  --color-cuoio:      #3D3530;
+  --color-success:    #2A7A4B;
+  --color-warning:    #C9820A;
+  --color-error:      #B92D2D;
+  --color-info:       #1E5A8E;
+
+  --radius-block: 4px;
+  --radius-card:  8px;
+  --radius-modal: 16px;
+
+  --spacing-touch: 44px;
+
+  --font-sans:  var(--font-dm-sans), system-ui, sans-serif;
+  --font-serif: var(--font-dm-serif), Georgia, serif;
+}
+
 :root {
   /* Brand colors */
   --color-ink:         #1A1A2E;

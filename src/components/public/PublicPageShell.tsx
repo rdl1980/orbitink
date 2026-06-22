@@ -22,7 +22,7 @@ export default function PublicPageShell({ page, children }: Props) {
 
   return (
     <div className="page-canvas" style={inlineStyle ? ({ cssText: inlineStyle } as React.CSSProperties) : undefined}>
-      <main className="mx-auto w-full max-w-public-page px-4 py-10 pb-16">
+      <main className="mx-auto w-full max-w-[480px] px-4 py-10 pb-16">
         {/* Header: avatar + nome + bio */}
         <header className="mb-8 text-center">
           {page.avatar_url && (
