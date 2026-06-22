@@ -1,13 +1,15 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import type { Metadata } from 'next'
+import type { Block, Page } from '@/types/database'
+import Editor from '@/components/editor/Editor'
 
 export const metadata: Metadata = { title: 'Dashboard' }
+export const dynamic = 'force-dynamic'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-
   if (!user) redirect('/login')
 
   const { data: profile } = await supabase
@@ -16,26 +18,47 @@ export default async function DashboardPage() {
     .eq('id', user.id)
     .single<{ username: string; display_name: string | null; plan: string }>()
 
-  return (
-    <main className="min-h-dvh bg-canvas px-4 py-12 max-w-public-page mx-auto">
-      <header className="mb-8">
-        <h1 className="font-serif text-3xl text-ink">
-          Ciao{profile?.display_name ? `, ${profile.display_name}` : ''}
-        </h1>
-        <p className="text-grigio text-sm mt-1">
-          orbitink.it/<strong className="text-cuoio">{profile?.username}</strong>
-          {' · '}
-          <span className="capitalize">{profile?.plan ?? 'free'}</span>
-        </p>
-      </header>
+  const { data: page } = await supabase
+    .from('pages')
+    .select('*')
+    .eq('owner_id', user.id)
+    .order('created_at', { ascending: true })
+    .limit(1)
+    .single<Page>()
 
-      {/* Placeholder — editor blocchi in costruzione */}
-      <div className="rounded-card border border-sabbia bg-avorio p-8 text-center">
-        <p className="font-serif text-xl text-ink mb-2">Editor in arrivo</p>
-        <p className="text-grigio text-sm">
-          Il costruttore di pagine è in sviluppo. Torna presto.
-        </p>
-      </div>
-    </main>
+  // Fallback: se per qualche motivo la pagina non esiste, creala
+  let resolvedPage = page
+  if (!resolvedPage && profile) {
+    const { data: created } = await supabase
+      .from('pages')
+      .insert({ owner_id: user.id, slug: profile.username, title: '', is_published: false })
+      .select('*')
+      .single<Page>()
+    resolvedPage = created ?? null
+  }
+
+  if (!resolvedPage) {
+    return (
+      <main className="min-h-dvh bg-canvas grid place-items-center px-4">
+        <p className="text-grigio">Errore nel caricamento della pagina. Ricarica.</p>
+      </main>
+    )
+  }
+
+  const { data: blocks } = await supabase
+    .from('blocks')
+    .select('*')
+    .eq('page_id', resolvedPage.id)
+    .order('position', { ascending: true })
+    .returns<Block[]>()
+
+  return (
+    <Editor
+      ownerId={user.id}
+      username={profile?.username ?? resolvedPage.slug}
+      plan={profile?.plan ?? 'free'}
+      page={resolvedPage}
+      initialBlocks={blocks ?? []}
+    />
   )
 }
