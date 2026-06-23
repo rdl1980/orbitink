@@ -12,6 +12,10 @@ export default async function DashboardPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
+  // Nuovo flusso: chi si registra via magic link deve prima impostare la password.
+  // Il flag vive in user_metadata (nessuna colonna DB necessaria).
+  if (!user.user_metadata?.password_set) redirect('/completa-profilo')
+
   const { data: profile } = await supabase
     .from('profiles')
     .select('username, display_name, plan')

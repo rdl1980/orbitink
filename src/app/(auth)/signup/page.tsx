@@ -1,19 +1,15 @@
 import { Metadata } from 'next'
-import LoginForm from './LoginForm'
+import SignupForm from './SignupForm'
 
 export const metadata: Metadata = {
-  title: 'Accedi',
-  description: 'Accedi al tuo account OrbitInk.',
+  title: 'Registrati',
+  description: 'Crea il tuo account OrbitInk.',
 }
 
-export default function LoginPage() {
+export default function SignupPage() {
   return (
     <main className="min-h-dvh bg-ink flex items-center justify-center px-4 py-16">
-      {/* Orbit decoration */}
-      <div
-        className="pointer-events-none fixed right-0 top-0 w-[600px] h-[600px] opacity-10"
-        aria-hidden
-      >
+      <div className="pointer-events-none fixed right-0 top-0 w-[600px] h-[600px] opacity-10" aria-hidden>
         <svg viewBox="0 0 600 600" fill="none" xmlns="http://www.w3.org/2000/svg">
           <circle cx="500" cy="100" r="280" stroke="#D4603A" strokeWidth="1.5" />
           <circle cx="500" cy="100" r="200" stroke="#D4603A" strokeWidth="1" opacity="0.5" />
@@ -23,24 +19,19 @@ export default function LoginPage() {
       </div>
 
       <div className="relative w-full max-w-sm">
-        {/* Logo */}
         <div className="mb-10 text-center">
           <span className="font-serif text-2xl text-canvas tracking-tight">OrbitInk</span>
-          <p className="mt-1 text-sm text-canvas/50">Il tuo spazio digitale. Tutto italiano.</p>
+          <p className="mt-1 text-sm text-canvas/50">Crea il tuo spazio digitale.</p>
         </div>
 
-        <LoginForm />
+        <SignupForm />
 
         <p className="mt-8 text-center text-xs text-canvas/30">
-          Accedendo accetti i{' '}
-          <a href="/termini" className="underline hover:text-canvas/60 transition-colors">
-            Termini di servizio
-          </a>{' '}
+          Registrandoti accetti i{' '}
+          <a href="/termini" className="underline hover:text-canvas/60 transition-colors">Termini</a>{' '}
           e la{' '}
-          <a href="/privacy" className="underline hover:text-canvas/60 transition-colors">
-            Privacy Policy
-          </a>
-          . I dati restano in Europa.
+          <a href="/privacy" className="underline hover:text-canvas/60 transition-colors">Privacy</a>.
+          I dati restano in Europa.
         </p>
       </div>
     </main>

@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils/cn'
 
@@ -12,68 +11,53 @@ const inputCls = cn(
   'transition-colors duration-fast',
 )
 
-export default function LoginForm() {
-  const router = useRouter()
+export default function SignupForm() {
   const supabase = createClient()
-
   const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [resetSent, setResetSent] = useState(false)
+  const [sent, setSent] = useState(false)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError(null)
     setLoading(true)
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email: email.trim().toLowerCase(),
-      password,
-    })
-
-    setLoading(false)
-
-    if (error) {
-      setError('Email o password non corretti.')
-      return
-    }
-    router.push('/dashboard')
-    router.refresh()
-  }
-
-  async function forgotPassword() {
-    if (!email.trim()) {
-      setError('Inserisci prima la tua email, poi clicca di nuovo.')
-      return
-    }
-    setError(null)
-    setLoading(true)
     const { error } = await supabase.auth.signInWithOtp({
       email: email.trim().toLowerCase(),
-      options: { emailRedirectTo: `${window.location.origin}/api/auth/callback` },
+      options: {
+        shouldCreateUser: true,
+        emailRedirectTo: `${window.location.origin}/api/auth/callback`,
+        data: { locale: 'it' },
+      },
     })
+
     setLoading(false)
     if (error) {
       setError('Qualcosa è andato storto. Riprova tra qualche secondo.')
       return
     }
-    setResetSent(true)
+    setSent(true)
   }
 
-  if (resetSent) {
+  if (sent) {
     return (
       <div className="rounded-card bg-canvas/5 border border-canvas/10 p-8 text-center">
+        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-terracotta/20">
+          <svg className="h-6 w-6 text-terracotta" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+        </div>
         <h2 className="font-serif text-xl text-canvas mb-2">Controlla la tua email</h2>
         <p className="text-sm text-canvas/60">
-          Ti abbiamo inviato un link di accesso a <strong className="text-canvas/80">{email}</strong>.
-          Una volta dentro potrai impostare una nuova password.
+          Abbiamo inviato un link di conferma a <strong className="text-canvas/80">{email}</strong>.
+          <br />Clicca il link per completare la registrazione.
         </p>
         <button
-          onClick={() => setResetSent(false)}
+          onClick={() => setSent(false)}
           className="mt-6 text-xs text-canvas/40 hover:text-canvas/60 underline"
         >
-          Torna al login
+          Usa un&apos;altra email
         </button>
       </div>
     )
@@ -98,50 +82,26 @@ export default function LoginForm() {
         />
       </div>
 
-      <div>
-        <label htmlFor="password" className="block text-xs font-semibold text-canvas/60 mb-2 uppercase tracking-wider">
-          Password
-        </label>
-        <input
-          id="password"
-          type="password"
-          autoComplete="current-password"
-          required
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="••••••••"
-          className={inputCls}
-        />
-      </div>
-
       {error && (
         <p className="text-sm text-error bg-error/10 rounded-block px-3 py-2">{error}</p>
       )}
 
       <button
         type="submit"
-        disabled={loading || !email || !password}
+        disabled={loading || !email}
         className={cn(
           'w-full h-touch rounded-block font-sans font-medium text-sm',
           'bg-terracotta text-canvas transition-colors duration-fast',
           'hover:bg-ink disabled:opacity-40 disabled:cursor-not-allowed',
         )}
       >
-        {loading ? 'Accesso in corso…' : 'Accedi'}
+        {loading ? 'Invio in corso…' : 'Registrati con link via email'}
       </button>
 
-      <div className="flex items-center justify-between pt-1">
-        <a href="/signup" className="text-xs text-canvas/50 hover:text-canvas underline">
-          Non hai un account? Registrati
-        </a>
-        <button
-          type="button"
-          onClick={forgotPassword}
-          className="text-xs text-canvas/40 hover:text-canvas/70 underline"
-        >
-          Password dimenticata?
-        </button>
-      </div>
+      <p className="text-center text-xs text-canvas/50">
+        Hai già un account?{' '}
+        <a href="/login" className="underline hover:text-canvas">Accedi</a>
+      </p>
     </form>
   )
 }
