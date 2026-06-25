@@ -1,8 +1,16 @@
 const ALLOWED_PROTOCOLS = ['https:', 'http:', 'mailto:', 'tel:']
 
 export function sanitizeUrl(url: string): string {
+  if (!url) return ''
+  let candidate = url.trim()
+  if (!candidate) return ''
+  // Se manca lo schema (es. "miosito.it", "www.miosito.it"), assume https://.
+  // Non tocca mailto:, tel:, http(s):// già presenti.
+  if (!/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(candidate)) {
+    candidate = `https://${candidate}`
+  }
   try {
-    const parsed = new URL(url)
+    const parsed = new URL(candidate)
     if (!ALLOWED_PROTOCOLS.includes(parsed.protocol)) return ''
     return parsed.toString()
   } catch {
