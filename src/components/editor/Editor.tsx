@@ -17,7 +17,7 @@ import {
 } from '@dnd-kit/sortable'
 import { createClient } from '@/lib/supabase/client'
 import type { Block, BlockType, Page, PageTheme } from '@/types/database'
-import { EDITOR_BLOCKS, blockMeta } from '@/lib/blocks'
+import { EDITOR_BLOCKS, type BlockPickerItem } from '@/lib/blocks'
 import SortableBlock from './SortableBlock'
 import AppearancePanel from './AppearancePanel'
 
@@ -69,11 +69,10 @@ export default function Editor({ ownerId, username, plan, page, initialBlocks }:
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 6 } }))
 
-  const addBlock = useCallback((type: BlockType) => {
-    const meta = blockMeta(type)
+  const addBlock = useCallback((item: BlockPickerItem) => {
     setBlocks((prev) => [
       ...prev,
-      { id: uid(), type, is_active: true, data: { ...(meta?.defaultData ?? {}) } },
+      { id: uid(), type: item.type, is_active: true, data: { ...item.defaultData } },
     ])
     setShowAdd(false)
   }, [])
@@ -243,8 +242,8 @@ export default function Editor({ ownerId, username, plan, page, initialBlocks }:
             <div className="mb-4 grid grid-cols-2 sm:grid-cols-3 gap-2 rounded-card border border-sabbia bg-avorio p-3">
               {EDITOR_BLOCKS.map((b) => (
                 <button
-                  key={b.type}
-                  onClick={() => addBlock(b.type)}
+                  key={b.key}
+                  onClick={() => addBlock(b)}
                   className="text-left rounded-block border border-sabbia bg-white px-3 py-2 hover:border-ink transition-colors"
                 >
                   <div className="text-sm font-medium text-ink">{b.label}</div>

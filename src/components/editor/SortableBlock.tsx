@@ -50,7 +50,7 @@ export default function SortableBlock({
           ⠿
         </button>
         <span className="text-xs font-semibold uppercase tracking-wide text-grigio">
-          {blockLabel(type)}
+          {blockLabel(type, data)}
         </span>
         <div className="ml-auto flex items-center gap-1">
           <button
@@ -79,12 +79,25 @@ export default function SortableBlock({
             value={(data.label as string) ?? ''}
             onChange={(e) => set({ label: e.target.value })}
           />
-          <input
-            className={inputCls}
-            placeholder="https://…"
-            value={(data.url as string) ?? ''}
-            onChange={(e) => set({ url: e.target.value })}
-          />
+          {data.kind === 'email' ? (
+            <input
+              type="email"
+              className={inputCls}
+              placeholder="tua@email.it"
+              value={(data.email as string) ?? ''}
+              onChange={(e) => {
+                const v = e.target.value.trim()
+                set({ email: e.target.value, url: v ? `mailto:${v}` : '' })
+              }}
+            />
+          ) : (
+            <input
+              className={inputCls}
+              placeholder="https://…"
+              value={(data.url as string) ?? ''}
+              onChange={(e) => set({ url: e.target.value })}
+            />
+          )}
           <div>
             <p className="text-xs text-grigio mb-1">Icona</p>
             <div className="flex flex-wrap gap-1.5">
