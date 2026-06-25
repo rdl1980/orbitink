@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { DM_Sans, DM_Serif_Display } from 'next/font/google'
+import { DM_Sans, DM_Serif_Display, Poppins, Fraunces, Nunito } from 'next/font/google'
 import './globals.css'
 
 const dmSans = DM_Sans({
@@ -14,6 +14,28 @@ const dmSerif = DM_Serif_Display({
   subsets: ['latin', 'latin-ext'],
   display: 'swap',
   weight: '400',
+})
+
+// Font selezionabili per le pagine pubbliche (temi)
+const poppins = Poppins({
+  variable: '--font-poppins',
+  subsets: ['latin', 'latin-ext'],
+  display: 'swap',
+  weight: ['400', '500', '600', '700'],
+})
+
+const fraunces = Fraunces({
+  variable: '--font-fraunces',
+  subsets: ['latin', 'latin-ext'],
+  display: 'swap',
+  weight: ['400', '600'],
+})
+
+const nunito = Nunito({
+  variable: '--font-nunito',
+  subsets: ['latin', 'latin-ext'],
+  display: 'swap',
+  weight: ['400', '600', '700', '800'],
 })
 
 export const metadata: Metadata = {
@@ -36,7 +58,7 @@ export default function RootLayout({
   return (
     <html
       lang="it"
-      className={`${dmSans.variable} ${dmSerif.variable} h-full`}
+      className={`${dmSans.variable} ${dmSerif.variable} ${poppins.variable} ${fraunces.variable} ${nunito.variable} h-full`}
     >
       <body className="min-h-full flex flex-col font-sans bg-canvas text-cuoio antialiased">
         {children}

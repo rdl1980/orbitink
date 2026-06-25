@@ -4,6 +4,8 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import type { BlockType } from '@/types/database'
 import { blockLabel } from '@/lib/blocks'
+import { LINK_ICONS, LinkIconById } from '@/lib/linkIcons'
+import { PLATFORMS, SocialIcon } from '@/lib/socialPlatforms'
 
 interface Props {
   id: string
@@ -83,6 +85,25 @@ export default function SortableBlock({
             value={(data.url as string) ?? ''}
             onChange={(e) => set({ url: e.target.value })}
           />
+          <div>
+            <p className="text-xs text-grigio mb-1">Icona</p>
+            <div className="flex flex-wrap gap-1.5">
+              {LINK_ICONS.map((ic) => {
+                const selected = (data.icon as string) === ic.id
+                return (
+                  <button
+                    key={ic.id}
+                    type="button"
+                    onClick={() => set({ icon: selected ? undefined : ic.id })}
+                    title={ic.label}
+                    className={`flex h-8 w-8 items-center justify-center rounded-block border transition-colors ${selected ? 'border-ink bg-avorio text-ink' : 'border-sabbia text-grigio hover:border-ink'}`}
+                  >
+                    <LinkIconById id={ic.id} size={16} />
+                  </button>
+                )
+              })}
+            </div>
+          </div>
         </div>
       )}
 
@@ -187,19 +208,25 @@ function SocialEditor({
     const next = items.map((it, idx) => (idx === i ? { ...it, ...patch } : it))
     onChange({ ...data, items: next })
   }
-  const add = () => onChange({ ...data, items: [...items, { platform: 'Instagram', url: '' }] })
+  const add = () => onChange({ ...data, items: [...items, { platform: 'instagram', url: '' }] })
   const remove = (i: number) => onChange({ ...data, items: items.filter((_, idx) => idx !== i) })
 
   return (
     <div className="space-y-2">
       {items.map((it, i) => (
-        <div key={i} className="flex gap-2">
-          <input
-            className={`${inputCls} max-w-[40%]`}
-            placeholder="Piattaforma"
+        <div key={i} className="flex items-center gap-2">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-block border border-sabbia text-cuoio">
+            <SocialIcon id={it.platform} size={18} useBrandColor />
+          </span>
+          <select
+            className={`${inputCls} max-w-[38%]`}
             value={it.platform}
             onChange={(e) => update(i, { platform: e.target.value })}
-          />
+          >
+            {PLATFORMS.map((p) => (
+              <option key={p.id} value={p.id}>{p.label}</option>
+            ))}
+          </select>
           <input
             className={inputCls}
             placeholder="https://…"

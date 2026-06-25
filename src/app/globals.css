@@ -113,8 +113,13 @@ html {
 
 /* Public page canvas */
 .page-canvas {
-  background: var(--bg);
+  background-color: var(--bg);
+  background-image: var(--page-bg-image, none);
+  background-size: var(--page-bg-size, cover);
+  background-position: center;
+  background-attachment: fixed;
   color: var(--text);
+  font-family: var(--page-font-body, var(--font-sans));
   min-height: 100dvh;
 }
 

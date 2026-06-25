@@ -1,27 +1,16 @@
-import type { Page, PageTheme } from '@/types/database'
+import type { Page } from '@/types/database'
+import { computeThemeStyle } from '@/lib/themes'
 
 interface Props {
   page: Page
   children: React.ReactNode
 }
 
-function themeVars(theme: PageTheme): string {
-  const vars: string[] = []
-  if (theme.colorBg)       vars.push(`--bg:${theme.colorBg}`)
-  if (theme.colorSurface)  vars.push(`--surface:${theme.colorSurface}`)
-  if (theme.colorText)     vars.push(`--text:${theme.colorText}`)
-  if (theme.colorMuted)    vars.push(`--text-muted:${theme.colorMuted}`)
-  if (theme.colorAccent)   vars.push(`--accent:${theme.colorAccent}`)
-  if (theme.colorAccentFg) vars.push(`--accent-fg:${theme.colorAccentFg}`)
-  if (theme.borderRadius)  vars.push(`--block-radius:${theme.borderRadius}`)
-  return vars.join(';')
-}
-
 export default function PublicPageShell({ page, children }: Props) {
-  const inlineStyle = themeVars(page.theme)
+  const themeStyle = computeThemeStyle(page.theme)
 
   return (
-    <div className="page-canvas" style={inlineStyle ? ({ cssText: inlineStyle } as React.CSSProperties) : undefined}>
+    <div className="page-canvas" style={themeStyle}>
       <main className="mx-auto w-full max-w-[480px] px-4 py-10 pb-16">
         {/* Header: avatar + nome + bio */}
         <header className="mb-8 text-center">
@@ -30,14 +19,14 @@ export default function PublicPageShell({ page, children }: Props) {
             <img
               src={page.avatar_url}
               alt={page.title}
-              width={80}
-              height={80}
+              width={88}
+              height={88}
               className="mx-auto mb-4 rounded-full object-cover"
-              style={{ width: 80, height: 80 }}
+              style={{ width: 88, height: 88 }}
             />
           )}
           {page.title && (
-            <h1 className="font-serif text-2xl" style={{ color: 'var(--text)' }}>
+            <h1 className="text-2xl font-semibold" style={{ color: 'var(--text)', fontFamily: 'var(--page-font-heading)' }}>
               {page.title}
             </h1>
           )}
@@ -49,9 +38,7 @@ export default function PublicPageShell({ page, children }: Props) {
         </header>
 
         {/* Blocks */}
-        <div className="flex flex-col gap-3">
-          {children}
-        </div>
+        <div className="flex flex-col gap-3">{children}</div>
 
         {/* Footer OrbitInk */}
         <footer className="mt-10 text-center">

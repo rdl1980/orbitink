@@ -36,6 +36,13 @@ export interface Profile {
 }
 
 export interface PageTheme {
+  // Nuovo modello a preset (selezionabili nell'editor)
+  background?: string          // id sfondo (vedi lib/themes BACKGROUNDS)
+  accent?: string              // id accento
+  buttonStyle?: 'fill' | 'outline' | 'soft'
+  buttonShape?: 'sharp' | 'rounded' | 'pill'
+  font?: string                // id font pairing
+  // Campi legacy (non più usati, mantenuti per compatibilità)
   colorBg?: string
   colorSurface?: string
   colorText?: string
@@ -44,7 +51,6 @@ export interface PageTheme {
   colorAccentFg?: string
   fontFamily?: string
   borderRadius?: string
-  buttonStyle?: 'solid' | 'outline' | 'ghost'
 }
 
 export interface Page {

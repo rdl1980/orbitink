@@ -13,7 +13,7 @@ export const EDITOR_BLOCKS: BlockMeta[] = [
     type: 'link',
     label: 'Link',
     description: 'Un pulsante che porta a un sito',
-    defaultData: { url: '', label: 'Il mio link', open_in_new_tab: true },
+    defaultData: { url: '', label: 'Il mio link', icon: 'link', open_in_new_tab: true },
   },
   {
     type: 'whatsapp',
@@ -25,7 +25,7 @@ export const EDITOR_BLOCKS: BlockMeta[] = [
     type: 'social_icons',
     label: 'Social',
     description: 'Le tue icone social',
-    defaultData: { items: [{ platform: 'Instagram', url: '' }] },
+    defaultData: { items: [{ platform: 'instagram', url: '' }] },
   },
   {
     type: 'text_header',

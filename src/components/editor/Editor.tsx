@@ -16,9 +16,10 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
 import { createClient } from '@/lib/supabase/client'
-import type { Block, BlockType, Page } from '@/types/database'
+import type { Block, BlockType, Page, PageTheme } from '@/types/database'
 import { EDITOR_BLOCKS, blockMeta } from '@/lib/blocks'
 import SortableBlock from './SortableBlock'
+import AppearancePanel from './AppearancePanel'
 
 interface Props {
   ownerId: string
@@ -52,6 +53,7 @@ export default function Editor({ ownerId, username, plan, page, initialBlocks }:
   const [bio, setBio] = useState(page.bio ?? '')
   const [avatarUrl, setAvatarUrl] = useState(page.avatar_url ?? '')
   const [isPublished, setIsPublished] = useState(page.is_published)
+  const [theme, setTheme] = useState<PageTheme>(page.theme ?? {})
   const [blocks, setBlocks] = useState<EditableBlock[]>(
     initialBlocks.map((b) => ({
       id: b.id,
@@ -110,6 +112,7 @@ export default function Editor({ ownerId, username, plan, page, initialBlocks }:
           title: title.trim(),
           bio: bio.trim(),
           avatar_url: avatarUrl.trim() || null,
+          theme,
           is_published: publish,
         })
         .eq('id', page.id)
@@ -220,6 +223,9 @@ export default function Editor({ ownerId, username, plan, page, initialBlocks }:
             className="w-full h-11 rounded-block border border-sabbia bg-canvas px-3 text-sm focus:border-ink focus:outline-none"
           />
         </section>
+
+        {/* Aspetto / tema */}
+        <AppearancePanel theme={theme} onChange={setTheme} />
 
         {/* Blocchi */}
         <section>
