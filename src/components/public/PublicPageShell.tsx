@@ -1,5 +1,5 @@
 import type { Page } from '@/types/database'
-import { computeThemeStyle } from '@/lib/themes'
+import { computeThemeStyle, themeClasses } from '@/lib/themes'
 
 interface Props {
   page: Page
@@ -8,9 +8,10 @@ interface Props {
 
 export default function PublicPageShell({ page, children }: Props) {
   const themeStyle = computeThemeStyle(page.theme)
+  const extraClasses = themeClasses(page.theme)
 
   return (
-    <div className="page-canvas" style={themeStyle}>
+    <div className={`page-canvas ${extraClasses}`} style={themeStyle}>
       <main className="mx-auto w-full max-w-[480px] px-4 py-10 pb-16">
         {/* Header: avatar + nome + bio */}
         <header className="mb-8 text-center">

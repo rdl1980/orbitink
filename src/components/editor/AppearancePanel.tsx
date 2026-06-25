@@ -8,6 +8,14 @@ interface Props {
   onChange: (theme: PageTheme) => void
 }
 
+const GROUPS = [
+  { id: 'tinta', label: 'Tinte' },
+  { id: 'gradiente', label: 'Gradienti' },
+  { id: 'mesh', label: 'Mesh' },
+  { id: 'animato', label: 'Animati' },
+  { id: 'pattern', label: 'Pattern' },
+] as const
+
 export default function AppearancePanel({ theme, onChange }: Props) {
   const t = { ...DEFAULT_THEME, ...theme }
   const set = (patch: Partial<PageTheme>) => onChange({ ...theme, ...patch })
@@ -16,22 +24,32 @@ export default function AppearancePanel({ theme, onChange }: Props) {
     <section className="mb-8 rounded-card border border-sabbia bg-white p-5">
       <h2 className="font-serif text-xl text-ink mb-4">Aspetto</h2>
 
-      {/* Sfondo */}
+      {/* Sfondo — raggruppato per categoria */}
       <label className="block text-xs font-semibold text-grigio uppercase tracking-wide mb-2">Sfondo</label>
-      <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 mb-5">
-        {BACKGROUNDS.map((b) => (
-          <button
-            key={b.id}
-            type="button"
-            onClick={() => set({ background: b.id })}
-            className={`rounded-block border-2 overflow-hidden transition-colors ${t.background === b.id ? 'border-ink' : 'border-sabbia'}`}
-            title={b.label}
-          >
-            <span className="block h-10 w-full" style={{ background: b.swatch }} />
-            <span className="block text-[10px] text-cuoio py-1 text-center truncate">{b.label}</span>
-          </button>
-        ))}
-      </div>
+      {GROUPS.map((g) => {
+        const items = BACKGROUNDS.filter((b) => b.group === g.id)
+        if (!items.length) return null
+        return (
+          <div key={g.id} className="mb-3">
+            <p className="text-[11px] text-grigio mb-1.5">{g.label}</p>
+            <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
+              {items.map((b) => (
+                <button
+                  key={b.id}
+                  type="button"
+                  onClick={() => set({ background: b.id })}
+                  className={`rounded-block border-2 overflow-hidden transition-colors ${t.background === b.id ? 'border-ink' : 'border-sabbia'}`}
+                  title={b.label}
+                >
+                  <span className="block h-10 w-full" style={{ background: b.swatch, backgroundSize: 'cover' }} />
+                  <span className="block text-[10px] text-cuoio py-1 text-center truncate">{b.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )
+      })}
+      <div className="mb-5" />
 
       {/* Accento */}
       <label className="block text-xs font-semibold text-grigio uppercase tracking-wide mb-2">Colore accento</label>

@@ -39,7 +39,7 @@ export interface PageTheme {
   // Nuovo modello a preset (selezionabili nell'editor)
   background?: string          // id sfondo (vedi lib/themes BACKGROUNDS)
   accent?: string              // id accento
-  buttonStyle?: 'fill' | 'outline' | 'soft'
+  buttonStyle?: 'fill' | 'outline' | 'soft' | 'glass'
   buttonShape?: 'sharp' | 'rounded' | 'pill'
   font?: string                // id font pairing
   // Campi legacy (non più usati, mantenuti per compatibilità)
